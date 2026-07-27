@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gagan NYC — Award Winning Creative Leader &amp; Designer</title>
+  <meta name="description" content="Portfolio of Gagan NYC, creative designer, founder, and marketer. High-performing 3D WebGL experiences, no-code websites, video editing, and growth marketing solutions.">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Film Grain Overlay -->
+  <div class="noise-overlay"></div>
+
+  <!-- Custom Pointer Cursors -->
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-circle"></div>
+
+  <!-- Screen Preloader -->
+  <div class="preloader">
+    <div class="loader-top">
+      <div>Portfolio v2.6</div>
+      <div>Loading Experience...</div>
+    </div>
+    <div class="loader-center">
+      <div class="loader-brand">
+        <span>G</span>
+        <span>A</span>
+        <span>G</span>
+        <span>A</span>
+        <span>N</span>
+        <span>&nbsp;</span>
+        <span>N</span>
+        <span>Y</span>
+        <span>C</span>
+      </div>
+      <div class="loader-progress-text">
+        <span class="loader-percent">0</span><span>%</span>
+      </div>
+    </div>
+    <div class="loader-bar-bg">
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <!-- Three.js 3D WebGL Background Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Main Website Content -->
+  <main>
+    
+    <!-- Hero Landing Section (Exact Layout of Screenshot) -->
+    <section class="hero-section" id="hero">
+      <div class="hero-layout">
+        
+        <!-- Left Text Column -->
+        <div class="hero-col left-col">
+          <span class="hero-sub">Award Winning Creative Leader</span>
+          <h1 class="hero-name">GAGAN</h1>
+        </div>
+
+        <!-- Center Image Card Column -->
+        <div class="hero-col center-col">
+          <div class="hero-image-card" data-cursor="interactive">
+            <img src="hero_portrait.png" alt="Gagan NYC Portrait on Beach in Orange Outfit">
+          </div>
+        </div>
+
+        <!-- Right Text Column -->
+        <div class="hero-col right-col">
+          <span class="hero-sub">Designer &amp; Founder</span>
+          <h1 class="hero-name">NYC</h1>
+          <div class="hero-clock hero-location">New York, NY - 12:40 PM GMT-4</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- About Intro Section -->
+    <section class="about-section" id="about">
+      <div style="max-width: 900px; margin: 0 auto;">
+        <span class="hero-tag">/ About Me</span>
+        <h2 style="font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; font-weight: 800; letter-spacing: -1px; margin-bottom: 2rem;">
+          Creative at the core. Designer. Marketer. Founder. Problem-solver.
+        </h2>
+        <p style="font-size: 1.2rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 2.5rem;">
+          With 13 years of experience, I bridge my creativity and my ability to adapt quickly, solve problems across departments, and produce work that strengthens brands, drives revenue growth, and supports teams through visual and strategic leadership.
+        </p>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <a href="#contact" class="form-submit-btn magnetic" style="text-decoration: none; text-align: center;" data-cursor="interactive">
+            <span class="magnetic-text">Schedule a call</span>
+          </a>
+          <a href="#" class="form-submit-btn magnetic" style="text-decoration: none; text-align: center; background-color: transparent; border: 1px solid var(--text-primary); color: var(--text-primary);" data-cursor="interactive">
+            <span class="magnetic-text">Download CV</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Section (GSAP Pinning & Card Stacking) -->
+    <section class="services-pin-container" id="services">
+      <div class="services-sticky">
+        <div class="services-left">
+          <span class="hero-tag">/ Services &amp; Skills</span>
+          <h2>What I do best?</h2>
+          <p class="services-subtitle">
+            A diverse operational skillset focused on cutting noise, setting goals, and moving fast to deliver measurable results.
+          </p>
+        </div>
+        <div class="services-right">
+          
+          <!-- Stacking Card 1 -->
+          <div class="service-card" style="z-index: 1;">
+            <div class="card-num">01 / Web Design</div>
+            <div class="card-content">
+              <h3>Web Design &amp; Systems</h3>
+              <p>Designing no-code and custom websites that are responsive, mobile-friendly, and SEO-ready. Every site is built for usability, speed, and modern aesthetics.</p>
+              <div class="card-tags">
+                <span class="card-tag">Figma</span>
+                <span class="card-tag">Framer</span>
+                <span class="card-tag">Webflow</span>
+                <span class="card-tag">WordPress</span>
+                <span class="card-tag">Three.js</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stacking Card 2 -->
+          <div class="service-card" style="z-index: 2;">
+            <div class="card-num">02 / Product Design</div>
+            <div class="card-content">
+              <h3>MVP Design &amp; GTM</h3>
+              <p>Building ideas from concept to Go-To-Market. I focus on scope, user flows, brand identity, product positioning, and aligning features with real user needs.</p>
+              <div class="card-tags">
+                <span class="card-tag">MVP Design</span>
+                <span class="card-tag">Pitch Decks</span>
+                <span class="card-tag">Brand Identity</span>
+                <span class="card-tag">Positioning</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stacking Card 3 -->
+          <div class="service-card" style="z-index: 3;">
+            <div class="card-num">03 / Graphic &amp; Visual Design</div>
+            <div class="card-content">
+              <h3>Visual Communication</h3>
+              <p>Creating digital visuals, ads, banners, logos, and typography structures to deliver clear brand messaging, powered by Midjourney and Runway AI integrations.</p>
+              <div class="card-tags">
+                <span class="card-tag">Photoshop</span>
+                <span class="card-tag">Illustrator</span>
+                <span class="card-tag">Midjourney</span>
+                <span class="card-tag">Typography</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stacking Card 4 -->
+          <div class="service-card" style="z-index: 4;">
+            <div class="card-num">04 / Video Editing</div>
+            <div class="card-content">
+              <h3>Motion Graphics</h3>
+              <p>Expert in video storytelling, corporate explainers, color grading, sound engineering, and promotional cinematic content to boost brand social presence.</p>
+              <div class="card-tags">
+                <span class="card-tag">After Effects</span>
+                <span class="card-tag">Premiere</span>
+                <span class="card-tag">Explainers</span>
+                <span class="card-tag">Sound Design</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stacking Card 5 -->
+          <div class="service-card" style="z-index: 5;">
+            <div class="card-num">05 / Digital Marketing</div>
+            <div class="card-content">
+              <h3>Digital &amp; Social SMM</h3>
+              <p>Leading campaigns across search, social, and email. Optimizing target funnels, tracking Google Analytics, Meta Ads, and scheduling community organic strategies.</p>
+              <div class="card-tags">
+                <span class="card-tag">Google Ads</span>
+                <span class="card-tag">Meta Ads</span>
+                <span class="card-tag">SEO/SEM</span>
+                <span class="card-tag">Analytics</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Work Section -->
+    <section class="portfolio-section" id="work">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <span class="hero-tag">/ Portfolio Projects</span>
+          <h2>Selected Work Samples</h2>
+        </div>
+        <p class="section-desc">
+          A carefully picked showcase of projects that highlight my commitment to the digital design industry.
+        </p>
+      </div>
+
+      <div class="projects-grid">
+        
+        <!-- Project 1 -->
+        <a href="#" class="project-card" data-cursor="project">
+          <div class="project-img-wrapper">
+            <div class="project-fallback-gfx">
+              <div class="gfx-gradient-bg"></div>
+              <!-- Premium SVG Wireframe -->
+              <svg viewBox="0 0 200 200" class="gfx-wireframe">
+                <circle cx="100" cy="100" r="50" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="currentColor" stroke-width="0.25" stroke-dasharray="2 2"/>
+                <line x1="30" y1="100" x2="170" y2="100" stroke="currentColor" stroke-width="0.25"/>
+                <line x1="100" y1="30" x2="100" y2="170" stroke="currentColor" stroke-width="0.25"/>
+                <polygon points="100,60 135,120 65,120" fill="none" stroke="currentColor" stroke-width="0.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="project-info">
+            <div>
+              <h3>TryHackMe Brand Redesign</h3>
+              <p>Creative Design & Web Elements</p>
+            </div>
+            <div class="project-arrow">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </a>
+
+        <!-- Project 2 -->
+        <a href="#" class="project-card" data-cursor="project">
+          <div class="project-img-wrapper">
+            <div class="project-fallback-gfx">
+              <div class="gfx-gradient-bg" style="background: radial-gradient(circle, rgba(230, 92, 0, 0.06) 0%, rgba(255,255,255,0) 70%);"></div>
+              <!-- Premium SVG Wireframe -->
+              <svg viewBox="0 0 200 200" class="gfx-wireframe">
+                <rect x="40" y="40" width="120" height="120" rx="10" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                <line x1="40" y1="70" x2="160" y2="70" stroke="currentColor" stroke-width="0.25"/>
+                <circle cx="60" cy="55" r="3" fill="currentColor"/>
+                <circle cx="70" cy="55" r="3" fill="currentColor"/>
+                <circle cx="80" cy="55" r="3" fill="currentColor"/>
+                <path d="M60,110 L90,90 L120,120 L150,80" fill="none" stroke="currentColor" stroke-width="0.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="project-info">
+            <div>
+              <h3>Involve Head of Design System</h3>
+              <p>Figma Variables & Product Layouts</p>
+            </div>
+            <div class="project-arrow">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </a>
+
+        <!-- Project 3 -->
+        <a href="#" class="project-card" data-cursor="project">
+          <div class="project-img-wrapper">
+            <div class="project-fallback-gfx">
+              <div class="gfx-gradient-bg" style="background: radial-gradient(circle, rgba(230, 92, 0, 0.06) 0%, rgba(255,255,255,0) 70%);"></div>
+              <!-- Premium SVG Wireframe -->
+              <svg viewBox="0 0 200 200" class="gfx-wireframe">
+                <path d="M100,20 L160,50 L160,120 L100,150 L40,120 L40,50 Z" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                <line x1="100" y1="20" x2="100" y2="150" stroke="currentColor" stroke-width="0.25"/>
+                <line x1="40" y1="50" x2="160" y2="120" stroke="currentColor" stroke-width="0.25"/>
+                <line x1="160" y1="50" x2="40" y2="120" stroke="currentColor" stroke-width="0.25"/>
+              </svg>
+            </div>
+          </div>
+          <div class="project-info">
+            <div>
+              <h3>Simplify-ERP Landing System</h3>
+              <p>SEO and Conversion Optimization Strategy</p>
+            </div>
+            <div class="project-arrow">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </a>
+
+        <!-- Project 4 -->
+        <a href="#" class="project-card" data-cursor="project">
+          <div class="project-img-wrapper">
+            <div class="project-fallback-gfx">
+              <div class="gfx-gradient-bg" style="background: radial-gradient(circle, rgba(230, 92, 0, 0.05) 0%, rgba(255,255,255,0) 70%);"></div>
+              <!-- Premium SVG Wireframe -->
+              <svg viewBox="0 0 200 200" class="gfx-wireframe">
+                <circle cx="100" cy="100" r="60" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                <path d="M60,100 Q100,40 140,100 Q100,160 60,100 Z" fill="none" stroke="currentColor" stroke-width="0.25"/>
+                <circle cx="100" cy="100" r="10" fill="currentColor"/>
+              </svg>
+            </div>
+          </div>
+          <div class="project-info">
+            <div>
+              <h3>GGHOST Co-Founder Branding</h3>
+              <p>Social Media Visuals & Video Promos</p>
+            </div>
+            <div class="project-arrow">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Experience / Career timeline -->
+    <section class="career-section" id="career">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <span class="hero-tag">/ Career</span>
+          <h2>My impact over the years</h2>
+        </div>
+      </div>
+
+      <div class="timeline-container">
+        
+        <!-- Job 1 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">2025 – Current</div>
+          <div class="timeline-content">
+            <h3>Creative Designer</h3>
+            <span class="timeline-company">TryHackMe LLC</span>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.95rem; line-height: 1.5;">
+              Designing cinematic explainers, visual ad banners, graphics for socials, and landing experiences for cyber learning resources.
+            </p>
+          </div>
+        </div>
+
+        <!-- Job 2 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">2023 – Current</div>
+          <div class="timeline-content">
+            <h3>Founder / Creative Director</h3>
+            <span class="timeline-company">DirectlyNik™</span>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.95rem; line-height: 1.5;">
+              Delivering high-converting design directions, interactive no-code builds, UI/UX testing, and strategic investor presentations.
+            </p>
+          </div>
+        </div>
+
+        <!-- Job 3 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">2024 – 2025</div>
+          <div class="timeline-content">
+            <h3>Head of Design</h3>
+            <span class="timeline-company">Involve</span>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.95rem; line-height: 1.5;">
+              Led design assets, visual identities, Figma layout libraries, and wireframe prototypes to support business development.
+            </p>
+          </div>
+        </div>
+
+        <!-- Job 4 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">2021 – 2023</div>
+          <div class="timeline-content">
+            <h3>Chief Digital Marketing Executive</h3>
+            <span class="timeline-company">Simplify-ERP®</span>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.95rem; line-height: 1.5;">
+              Managed SEO metrics, conversion rate enhancements, target campaigns, analytical reports, and team collaborations.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section" id="testimonials">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <span class="hero-tag">/ Community Trust</span>
+          <h2>Testimonials</h2>
+        </div>
+      </div>
+
+      <div class="testimonials-track-container">
+        <div class="testimonials-track">
+          
+          <!-- Review 1 -->
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "Gagan NYC is very talented doing vibe coding + designing. I have an AI startup and we needed help with layout and design directions for my team, so Gagan did exactly that. Recommended!"
+            </p>
+            <div class="testimonial-footer">
+              <div>
+                <div class="client-name">Oliver S.</div>
+                <div class="client-role">Design &amp; Vibe Coding</div>
+              </div>
+              <div class="client-date">Feb 2026</div>
+            </div>
+          </div>
+
+          <!-- Review 2 -->
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "I asked and Nik delivered honestly. I didn't want a generic website, I wanted something I could showcase and feel proud of. He got that instantly and gave me what I needed."
+            </p>
+            <div class="testimonial-footer">
+              <div>
+                <div class="client-name">Giovanni</div>
+                <div class="client-role">Website Design</div>
+              </div>
+              <div class="client-date">Mar 2026</div>
+            </div>
+          </div>
+
+          <!-- Review 3 -->
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "Working with Nik, I can say he is one of the most talented designers. He is a true prodigy when it comes to design — his creativity, precision, and ability to understand clients is unmatched."
+            </p>
+            <div class="testimonial-footer">
+              <div>
+                <div class="client-name">Mihael</div>
+                <div class="client-role">Colleague</div>
+              </div>
+              <div class="client-date">Sep 2025</div>
+            </div>
+          </div>
+
+          <!-- Review 4 -->
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "Fast, reliable, and talented. He turned a vague idea into a polished product. Just like he mentions, his design sense is really unmatched. We see results overnight."
+            </p>
+            <div class="testimonial-footer">
+              <div>
+                <div class="client-name">Tomas</div>
+                <div class="client-role">Branding</div>
+              </div>
+              <div class="client-date">Sep 2025</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+      <div class="contact-left">
+        <span class="hero-tag">/ Hello, it's me</span>
+        <h2>Contact me</h2>
+        <p style="color: var(--text-secondary); line-height: 1.6; max-width: 400px;">
+          I work with founders, product teams, companies, and brands. I set one goal, cut noise, and move. Send a message to start.
+        </p>
+        
+        <div class="contact-info-list">
+          <div class="contact-info-item">
+            <span class="contact-info-label">Write me an email</span>
+            <a href="mailto:hello@gagannyc.com" class="contact-info-value" data-cursor="interactive">hello@gagannyc.com</a>
+          </div>
+          <div class="contact-info-item">
+            <span class="contact-info-label">Skype / Discord ID</span>
+            <span class="contact-info-value">gagan.nyc</span>
+          </div>
+        </div>
+
+        <div class="social-links">
+          <a href="#" class="social-link magnetic" data-cursor="interactive">𝕏</a>
+          <a href="#" class="social-link magnetic" data-cursor="interactive">ln</a>
+          <a href="#" class="social-link magnetic" data-cursor="interactive">be</a>
+          <a href="#" class="social-link magnetic" data-cursor="interactive">dr</a>
+        </div>
+      </div>
+
+      <div class="contact-right">
+        <form class="contact-form" id="contact-form" onsubmit="event.preventDefault(); alert('Message sent successfully!');">
+          <div class="form-group">
+            <input type="text" id="name" class="form-input" placeholder=" " required>
+            <label for="name" class="form-label">Your Name</label>
+          </div>
+          <div class="form-group">
+            <input type="email" id="email" class="form-input" placeholder=" " required>
+            <label for="email" class="form-label">Email Address</label>
+          </div>
+          <div class="form-group">
+            <input type="text" id="subject" class="form-input" placeholder=" ">
+            <label for="subject" class="form-label">Subject</label>
+          </div>
+          <div class="form-group">
+            <textarea id="message" class="form-input" rows="4" placeholder=" " required style="resize: none;"></textarea>
+            <label for="message" class="form-label">Project Details</label>
+          </div>
+          <div class="form-btn-wrapper">
+            <button type="submit" class="form-submit-btn magnetic" data-cursor="interactive">
+              <span class="magnetic-text">Send Message</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Capsule Navbar (Matching Nikola's layout exactly) -->
+  <nav class="bottom-navbar">
+    <a href="#hero" class="bottom-home-icon" data-cursor="interactive">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </a>
+    <ul>
+      <li><a href="#about" data-cursor="interactive">About</a></li>
+      <li><a href="#services" data-cursor="interactive">Services</a></li>
+      <li><a href="#work" data-cursor="interactive">Portfolio</a></li>
+      <li><a href="#testimonials" data-cursor="interactive">Reviews</a></li>
+    </ul>
+    <a href="#contact" class="bottom-nav-btn" data-cursor="interactive">Contact me</a>
+  </nav>
+
+  <!-- Footer -->
+  <footer>
+    <div>© 2026 Gagan NYC — All Rights Reserved.</div>
+    <div class="footer-clock">00:00:00 LOCAL</div>
+    <div>New York, NY</div>
+  </footer>
+
+  <!-- External Script Libraries (Three.js and GSAP via CDNs) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+  
+  <!-- Main JavaScript File -->
+  <script src="main.js"></script>
+
+  <script>
+    // Smooth scrolling link behavior for all anchors
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        const target = document.querySelector(targetId);
+        if (target) {
+          gsap.to(window, {
+            scrollTo: target,
+            duration: 1.5,
+            ease: "power3.inOut"
+          });
+        }
+      });
+    });
+
+    const scrollIndicator = document.getElementById('scroll-to-work');
+    if (scrollIndicator) {
+      scrollIndicator.addEventListener('click', () => {
+        const aboutSec = document.getElementById('about');
+        if (aboutSec) {
+          aboutSec.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
