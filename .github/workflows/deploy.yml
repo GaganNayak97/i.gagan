@@ -1,1 +1,22 @@
-# deploy
+name: Deploy to InfinityFree
+
+on:
+  push:
+    branches:
+      - main # Agar aapke main branch ka naam 'master' hai toh yahan 'master' kar dein
+
+jobs:
+  web-deploy:
+    name: Deploying to InfinityFree
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get latest code
+        uses: actions/checkout@v3
+
+      - name: Sync files via FTP
+        uses: SamKirsch/ftp-deploy-action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /htdocs/
