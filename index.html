@@ -521,6 +521,27 @@
     <a href="#contact" class="bottom-nav-btn" data-cursor="interactive">Contact me</a>
   </nav>
 
+  <div class="agent-widget" id="agent-widget">
+    <button class="agent-toggle" id="agent-toggle" type="button" aria-expanded="false" aria-controls="agent-panel">
+      <span>Ask AI</span>
+    </button>
+    <div class="agent-panel" id="agent-panel" role="dialog" aria-label="Portfolio assistant">
+      <div class="agent-panel-header">
+        <div>
+          <div class="agent-panel-title">Portfolio Assistant</div>
+          <div class="agent-panel-subtitle">Quick answers about the work</div>
+        </div>
+        <button class="agent-close" id="agent-close" type="button" aria-label="Close assistant">✕</button>
+      </div>
+      <div class="agent-messages" id="agent-messages"></div>
+      <div class="agent-quick-replies" id="agent-quick-replies"></div>
+      <form class="agent-form" id="agent-form">
+        <input id="agent-input" type="text" placeholder="Ask about services, work, or contact" autocomplete="off" />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer>
     <div>© 2026 Gagan NYC — All Rights Reserved.</div>
@@ -536,6 +557,7 @@
   
   <!-- Main JavaScript File -->
   <script src="main.js"></script>
+  <script src="agent.js"></script>
 
   <script>
     // Smooth scrolling link behavior for all anchors
