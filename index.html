@@ -477,7 +477,7 @@
       </div>
 
       <div class="contact-right">
-        <form class="contact-form" id="contact-form" onsubmit="event.preventDefault(); alert('Message sent successfully!');">
+        <form class="contact-form" id="contact-form" novalidate>
           <div class="form-group">
             <input type="text" id="name" class="form-input" placeholder=" " required>
             <label for="name" class="form-label">Your Name</label>
@@ -499,6 +499,7 @@
               <span class="magnetic-text">Send Message</span>
             </button>
           </div>
+          <p class="form-status" id="contact-form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
     </section>
@@ -558,34 +559,5 @@
   <!-- Main JavaScript File -->
   <script src="main.js"></script>
   <script src="agent.js"></script>
-
-  <script>
-    // Smooth scrolling link behavior for all anchors
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        const target = document.querySelector(targetId);
-        if (target) {
-          gsap.to(window, {
-            scrollTo: target,
-            duration: 1.5,
-            ease: "power3.inOut"
-          });
-        }
-      });
-    });
-
-    const scrollIndicator = document.getElementById('scroll-to-work');
-    if (scrollIndicator) {
-      scrollIndicator.addEventListener('click', () => {
-        const aboutSec = document.getElementById('about');
-        if (aboutSec) {
-          aboutSec.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    }
-  </script>
 </body>
 </html>
