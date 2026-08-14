@@ -2,17 +2,32 @@
 
 // Initialize chatbot when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  initChatbot();
+  try {
+    initChatbot();
+  } catch (error) {
+    console.error('[chatbot] failed to initialise:', error);
+  }
 });
 
 function initChatbot() {
-  const agentToggle = document.getElementById('agent-toggle');
-  const agentPanel = document.getElementById('agent-panel');
-  const agentClose = document.getElementById('agent-close');
-  const agentForm = document.getElementById('agent-form');
-  const agentInput = document.getElementById('agent-input');
-  const agentMessages = document.getElementById('agent-messages');
-  const agentQuickReplies = document.getElementById('agent-quick-replies');
+  const elements = {
+    agentToggle: document.getElementById('agent-toggle'),
+    agentPanel: document.getElementById('agent-panel'),
+    agentClose: document.getElementById('agent-close'),
+    agentForm: document.getElementById('agent-form'),
+    agentInput: document.getElementById('agent-input'),
+    agentMessages: document.getElementById('agent-messages'),
+    agentQuickReplies: document.getElementById('agent-quick-replies'),
+    agentWidget: document.getElementById('agent-widget')
+  };
+
+  const missing = Object.keys(elements).filter(key => !elements[key]);
+  if (missing.length > 0) {
+    // Bail out loudly instead of throwing halfway through wiring up listeners
+    throw new Error(`missing chatbot elements: ${missing.join(', ')}`);
+  }
+
+  const { agentToggle, agentPanel, agentClose, agentForm, agentInput, agentMessages, agentQuickReplies, agentWidget } = elements;
 
   // Quick reply suggestions
   const quickReplies = [
@@ -73,7 +88,8 @@ function initChatbot() {
       btn.type = 'button';
       btn.addEventListener('click', () => {
         agentInput.value = reply;
-        agentForm.dispatchEvent(new Event('submit'));
+        // Cancelable, otherwise preventDefault() is ignored and the form navigates away
+        agentForm.dispatchEvent(new Event('submit', { cancelable: true }));
       });
       agentQuickReplies.appendChild(btn);
     });
@@ -134,8 +150,12 @@ function initChatbot() {
       
       // Simulate AI thinking delay
       setTimeout(() => {
-        const aiResponse = getAIResponse(message);
-        addMessage(aiResponse, 'assistant');
+        try {
+          addMessage(getAIResponse(message), 'assistant');
+        } catch (error) {
+          console.error('[chatbot] could not generate a reply:', error);
+          addMessage("Sorry, something went wrong on my side. Please email hello@gagannyc.com instead.", 'assistant');
+        }
       }, 500);
     }
   });
@@ -153,7 +173,6 @@ function initChatbot() {
 
   // Close when clicking outside
   document.addEventListener('click', (e) => {
-    const agentWidget = document.getElementById('agent-widget');
     if (!agentWidget.contains(e.target) && agentPanel.classList.contains('is-open')) {
       togglePanel();
     }

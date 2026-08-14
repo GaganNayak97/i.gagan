@@ -1,7 +1,33 @@
 /* Core JavaScript Logic for 3D Minimal Portfolio */
 
-// Register GSAP ScrollTrigger
-gsap.registerPlugin(ScrollTrigger);
+// Reports a failure together with its origin instead of letting it disappear
+function reportError(context, error) {
+  console.error(`[portfolio] ${context}:`, error);
+}
+
+// Runs an init step in isolation so one broken feature cannot abort the rest
+function runInit(name, fn) {
+  try {
+    fn();
+    return true;
+  } catch (error) {
+    reportError(`${name} failed to initialise`, error);
+    return false;
+  }
+}
+
+const hasGsap = typeof gsap !== 'undefined';
+const hasScrollTrigger = typeof ScrollTrigger !== 'undefined';
+const hasThree = typeof THREE !== 'undefined';
+const hasScrollTo = typeof ScrollToPlugin !== 'undefined';
+
+if (!hasGsap) {
+  reportError('GSAP is unavailable, animations are disabled', new Error('gsap is not defined'));
+} else if (!hasScrollTrigger) {
+  reportError('ScrollTrigger is unavailable, scroll animations are disabled', new Error('ScrollTrigger is not defined'));
+} else {
+  runInit('GSAP ScrollTrigger registration', () => gsap.registerPlugin(ScrollTrigger));
+}
 
 // Global Variables
 let mouseX = 0, mouseY = 0;
@@ -129,8 +155,11 @@ function initPreloader() {
   const progressBar = document.querySelector('.loader-bar');
   const progressPercent = document.querySelector('.loader-percent');
   const brandSpans = document.querySelectorAll('.loader-brand span');
-  
-  if (!preloader) return;
+
+  if (!preloader || !hasGsap) {
+    revealPage();
+    return;
+  }
 
   gsap.to(brandSpans, {
     opacity: 1,
@@ -142,40 +171,63 @@ function initPreloader() {
 
   let progress = 0;
   const interval = setInterval(() => {
-    progress += Math.floor(Math.random() * 8) + 2;
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(interval);
-      
-      const tl = gsap.timeline({
-        onComplete: () => {
-          preloader.style.display = 'none';
-          document.body.style.overflowY = 'auto';
-          triggerPageEntrance();
-        }
-      });
+    try {
+      progress += Math.floor(Math.random() * 8) + 2;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
 
-      tl.to(brandSpans, {
-        y: -100,
-        opacity: 0,
-        stagger: 0.04,
-        duration: 0.8,
-        ease: "power4.in"
-      })
-      .to(preloader, {
-        yPercent: -100,
-        duration: 1.2,
-        ease: "power4.inOut"
-      }, "-=0.3");
+        const tl = gsap.timeline({ onComplete: revealPage });
+
+        tl.to(brandSpans, {
+          y: -100,
+          opacity: 0,
+          stagger: 0.04,
+          duration: 0.8,
+          ease: "power4.in"
+        })
+        .to(preloader, {
+          yPercent: -100,
+          duration: 1.2,
+          ease: "power4.inOut"
+        }, "-=0.3");
+      }
+
+      if (progressBar) progressBar.style.width = `${progress}%`;
+      if (progressPercent) progressPercent.textContent = progress;
+    } catch (error) {
+      clearInterval(interval);
+      reportError('Preloader animation failed', error);
+      revealPage();
     }
-    
-    if (progressBar) progressBar.style.width = `${progress}%`;
-    if (progressPercent) progressPercent.textContent = progress;
   }, 80);
+
+  // Last resort: never leave the page hidden and scroll-locked behind the preloader
+  setTimeout(() => {
+    if (!pageRevealed) {
+      reportError('Preloader did not complete in time, revealing page', new Error('preloader timeout'));
+      revealPage();
+    }
+  }, 12000);
+}
+
+// Hides the preloader and unlocks scrolling, at most once
+let pageRevealed = false;
+function revealPage() {
+  if (pageRevealed) return;
+  pageRevealed = true;
+
+  const preloader = document.querySelector('.preloader');
+  if (preloader) preloader.style.display = 'none';
+  document.body.style.overflowY = 'auto';
+
+  runInit('Page entrance animation', triggerPageEntrance);
 }
 
 // Entrance Reveals
 function triggerPageEntrance() {
+  if (!hasGsap) return;
+
   // Reveal bottom navbar
   gsap.from('.bottom-navbar', {
     y: 100,
@@ -207,12 +259,24 @@ function initThreeJS() {
   const canvas = document.getElementById('webgl-canvas');
   if (!canvas) return;
 
+  if (!hasThree) {
+    canvas.style.display = 'none';
+    reportError('Three.js is unavailable, 3D background is disabled', new Error('THREE is not defined'));
+    return;
+  }
+
   scene = new THREE.Scene();
 
   camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.set(0, 0, 12);
 
-  renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  } catch (error) {
+    canvas.style.display = 'none';
+    reportError('WebGL context creation failed, 3D background is disabled', error);
+    return;
+  }
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -308,7 +372,7 @@ function initThreeJS() {
   });
 
   // Central Card Hover Parallax hook
-  const card = document.querySelector('.hero-image-card');
+  const card = hasGsap ? document.querySelector('.hero-image-card') : null;
   if (card) {
     document.addEventListener('mousemove', (e) => {
       const cx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
@@ -328,8 +392,18 @@ function initThreeJS() {
 
   // Animation loop
   function animate() {
+    try {
+      renderFrame();
+    } catch (error) {
+      // Stop the loop rather than throwing on every single frame
+      canvas.style.display = 'none';
+      reportError('3D background render loop stopped', error);
+      return;
+    }
     requestAnimationFrame(animate);
+  }
 
+  function renderFrame() {
     currentScrollY += (scrollTargetY - currentScrollY) * 0.08;
 
     // Point Light follows mouse position smoothly
@@ -365,8 +439,9 @@ function initThreeJS() {
 function initCardStacking() {
   const cards = document.querySelectorAll('.service-card');
   const stickyContainer = document.querySelector('.services-sticky');
-  
+
   if (cards.length === 0 || !stickyContainer) return;
+  if (!hasGsap || !hasScrollTrigger) return;
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -417,7 +492,7 @@ function initCardStacking() {
 // 5. Magnetic Snapping Hover Effects
 function initMagneticButtons() {
   const magnets = document.querySelectorAll('.magnetic');
-  if (window.innerWidth <= 768) return;
+  if (window.innerWidth <= 768 || !hasGsap) return;
 
   magnets.forEach(btn => {
     btn.addEventListener('mousemove', (e) => {
@@ -455,6 +530,7 @@ function initMagneticButtons() {
 
 // 6. Project Card Parallax Image Hover
 function initProjectImageHover() {
+  if (!hasGsap) return;
   const cards = document.querySelectorAll('.project-card');
   
   cards.forEach(card => {
@@ -493,7 +569,7 @@ function initProjectImageHover() {
 // 7. Infinite Testimonials Auto-scroll (Marquee Effect)
 function initTestimonialsMarquee() {
   const track = document.querySelector('.testimonials-track');
-  if (!track) return;
+  if (!track || !hasGsap) return;
 
   const cards = Array.from(track.children);
   cards.forEach(card => {
@@ -502,6 +578,10 @@ function initTestimonialsMarquee() {
   });
 
   const originalWidth = track.scrollWidth / 2;
+  if (!originalWidth) {
+    reportError('Testimonials marquee skipped', new Error('track has no measurable width'));
+    return;
+  }
 
   const animation = gsap.to(track, {
     x: `-=${originalWidth}`,
@@ -522,7 +602,18 @@ function initLiveClock() {
   const clockElement = document.querySelector('.footer-clock');
   const heroClockElement = document.querySelector('.hero-clock');
   
+  let clockInterval = null;
+
   function updateClock() {
+    try {
+      renderClock();
+    } catch (error) {
+      if (clockInterval) clearInterval(clockInterval);
+      reportError('Live clock stopped', error);
+    }
+  }
+
+  function renderClock() {
     const now = new Date();
     let hours = now.getHours();
     let minutes = now.getMinutes();
@@ -549,19 +640,108 @@ function initLiveClock() {
   }
   
   updateClock();
-  setInterval(updateClock, 1000);
+  clockInterval = setInterval(updateClock, 1000);
 }
 
 // Initialize Everything
 window.addEventListener('DOMContentLoaded', () => {
   document.body.style.overflowY = 'hidden'; // Lock scrolling during preloader
-  
-  initPreloader();
-  initCustomCursor();
-  initThreeJS();
-  initCardStacking();
-  initMagneticButtons();
-  initProjectImageHover();
-  initTestimonialsMarquee();
-  initLiveClock();
+
+  const steps = [
+    ['Preloader', initPreloader],
+    ['Custom cursor', initCustomCursor],
+    ['3D background', initThreeJS],
+    ['Service card stacking', initCardStacking],
+    ['Magnetic buttons', initMagneticButtons],
+    ['Project image hover', initProjectImageHover],
+    ['Testimonials marquee', initTestimonialsMarquee],
+    ['Live clock', initLiveClock],
+    ['Contact form', initContactForm],
+    ['Smooth scrolling', initSmoothScrolling]
+  ];
+
+  const failed = steps.filter(([name, fn]) => !runInit(name, fn)).map(([name]) => name);
+
+  // The preloader locks scrolling, so make sure it is released even if it never ran
+  if (!pageRevealed && failed.includes('Preloader')) revealPage();
 });
+
+// 9. Contact form submission
+function initContactForm() {
+  const form = document.getElementById('contact-form');
+  if (!form) return;
+
+  const status = document.getElementById('contact-form-status');
+
+  function setStatus(message, isError) {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.toggle('is-error', Boolean(isError));
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    if (!form.reportValidity()) return;
+
+    const name = form.querySelector('#name');
+    const email = form.querySelector('#email');
+    const subject = form.querySelector('#subject');
+    const message = form.querySelector('#message');
+
+    if (!name || !email || !message) {
+      setStatus('This form is misconfigured. Please email hello@gagannyc.com directly.', true);
+      reportError('Contact form is missing required fields', new Error('missing form inputs'));
+      return;
+    }
+
+    // There is no backend for this static site, so hand the message to the visitor's mail client
+    const body = `Name: ${name.value}\nEmail: ${email.value}\n\n${message.value}`;
+    const mailto = `mailto:hello@gagannyc.com?subject=${encodeURIComponent((subject && subject.value) || 'Project enquiry')}&body=${encodeURIComponent(body)}`;
+
+    try {
+      window.location.href = mailto;
+      setStatus('Opening your email client to send this message to hello@gagannyc.com.', false);
+    } catch (error) {
+      setStatus('Could not open your email client. Please email hello@gagannyc.com directly.', true);
+      reportError('Contact form could not open a mail client', error);
+    }
+  });
+}
+
+// 10. Smooth in-page navigation
+function initSmoothScrolling() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', (e) => {
+      const targetId = anchor.getAttribute('href');
+      if (!targetId || targetId === '#') return;
+
+      let target = null;
+      try {
+        target = document.querySelector(targetId);
+      } catch (error) {
+        reportError(`Invalid anchor target "${targetId}"`, error);
+        return; // Let the browser handle the link instead of swallowing the click
+      }
+
+      if (!target) return;
+
+      e.preventDefault();
+
+      // Fall back to native scrolling when the GSAP scroll plugin is unavailable
+      if (hasGsap && hasScrollTo) {
+        gsap.to(window, { scrollTo: target, duration: 1.5, ease: "power3.inOut" });
+      } else {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  const scrollIndicator = document.getElementById('scroll-to-work');
+  if (scrollIndicator) {
+    scrollIndicator.addEventListener('click', () => {
+      const aboutSec = document.getElementById('about');
+      if (aboutSec) aboutSec.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+}

@@ -1051,6 +1051,17 @@ section {
   box-shadow: 0 10px 25px rgba(var(--accent-rgb), 0.25);
 }
 
+.form-status {
+  margin-top: 1rem;
+  min-height: 1.2em;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.form-status.is-error {
+  color: #c0392b;
+}
+
 /* Footer */
 footer {
   border-top: 1px solid var(--border);
