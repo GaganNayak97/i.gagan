@@ -17,7 +17,7 @@ let cursorHeight = 40;
 let lastX = 0, lastY = 0;
 
 function initCustomCursor() {
-  if (window.innerWidth <= 768) return; // Disable custom cursor on mobile
+  if (isMobileViewport()) return; // Disable custom cursor on mobile
 
   document.addEventListener('mousemove', (e) => {
     targetMouseX = e.clientX;
@@ -25,8 +25,8 @@ function initCustomCursor() {
   });
 
   function updateCursor() {
-    mouseX += (targetMouseX - mouseX) * 0.25;
-    mouseY += (targetMouseY - mouseY) * 0.25;
+    mouseX = lerp(mouseX, targetMouseX, 0.25);
+    mouseY = lerp(mouseY, targetMouseY, 0.25);
     
     if (cursorDot) {
       cursorDot.style.left = `${mouseX}px`;
@@ -40,11 +40,11 @@ function initCustomCursor() {
         const targetX = rect.left + rect.width / 2;
         const targetY = rect.top + rect.height / 2;
         
-        cursorX += (targetX - cursorX) * 0.22;
-        cursorY += (targetY - cursorY) * 0.22;
+        cursorX = lerp(cursorX, targetX, 0.22);
+        cursorY = lerp(cursorY, targetY, 0.22);
         
-        cursorWidth += (rect.width + 12 - cursorWidth) * 0.22;
-        cursorHeight += (rect.height + 12 - cursorHeight) * 0.22;
+        cursorWidth = lerp(cursorWidth, rect.width + 12, 0.22);
+        cursorHeight = lerp(cursorHeight, rect.height + 12, 0.22);
         
         cursorCircle.style.left = `${cursorX}px`;
         cursorCircle.style.top = `${cursorY}px`;
@@ -54,8 +54,8 @@ function initCustomCursor() {
         cursorCircle.style.transform = 'translate(-50%, -50%)';
       } else {
         // NORMAL FLUID LERP STATE
-        cursorX += (targetMouseX - cursorX) * 0.15;
-        cursorY += (targetMouseY - cursorY) * 0.15;
+        cursorX = lerp(cursorX, targetMouseX, 0.15);
+        cursorY = lerp(cursorY, targetMouseY, 0.15);
         
         // Calculate velocity for stretch
         const dx = cursorX - lastX;
@@ -76,8 +76,8 @@ function initCustomCursor() {
           baseSize = 50;
         }
         
-        cursorWidth += (baseSize - cursorWidth) * 0.2;
-        cursorHeight += (baseSize - cursorHeight) * 0.2;
+        cursorWidth = lerp(cursorWidth, baseSize, 0.2);
+        cursorHeight = lerp(cursorHeight, baseSize, 0.2);
         
         cursorCircle.style.left = `${cursorX}px`;
         cursorCircle.style.top = `${cursorY}px`;
@@ -95,31 +95,26 @@ function initCustomCursor() {
 
   // Hover docking listeners
   const interactives = document.querySelectorAll('a, button, input, textarea, .scroll-indicator, .timeline-item, .bottom-navbar a, .bottom-nav-btn');
-  interactives.forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      document.body.classList.add('hover-interactive');
+  bindHoverBodyClass(interactives, 'hover-interactive', {
+    onEnter: (el) => {
       if (el.classList.contains('magnetic') || el.tagName === 'A' || el.tagName === 'BUTTON' || el.classList.contains('bottom-nav-btn')) {
         snapTarget = el;
         document.body.classList.add('cursor-snapped');
       }
-    });
-    el.addEventListener('mouseleave', () => {
-      document.body.classList.remove('hover-interactive');
+    },
+    onLeave: () => {
       snapTarget = null;
       document.body.classList.remove('cursor-snapped');
-    });
+    }
   });
 
-  const projects = document.querySelectorAll('.project-card');
-  projects.forEach(card => {
-    card.addEventListener('mouseenter', () => {
-      document.body.classList.add('hover-project');
+  bindHoverBodyClass(document.querySelectorAll('.project-card'), 'hover-project', {
+    onEnter: () => {
       if (cursorCircle) cursorCircle.textContent = 'VIEW';
-    });
-    card.addEventListener('mouseleave', () => {
-      document.body.classList.remove('hover-project');
+    },
+    onLeave: () => {
       if (cursorCircle) cursorCircle.textContent = '';
-    });
+    }
   });
 }
 
@@ -213,8 +208,7 @@ function initThreeJS() {
   camera.position.set(0, 0, 12);
 
   renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  syncRendererToViewport(renderer, camera);
 
   hexGroup = new THREE.Group();
   scene.add(hexGroup);
@@ -281,12 +275,7 @@ function initThreeJS() {
   scene.add(pointLight);
 
   // Resize handler
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  });
+  window.addEventListener('resize', () => syncRendererToViewport(renderer, camera));
 
   // Animation variables
   let mouse3D = new THREE.Vector3(0, 0, 3);
@@ -308,33 +297,22 @@ function initThreeJS() {
   });
 
   // Central Card Hover Parallax hook
-  const card = document.querySelector('.hero-image-card');
-  if (card) {
-    document.addEventListener('mousemove', (e) => {
-      const cx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-      const cy = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
-      gsap.to(card, {
-        rotateY: cx * 15,
-        rotateX: -cy * 15,
-        duration: 0.6,
-        ease: "power2.out"
-      });
-    });
-    
-    document.addEventListener('mouseleave', () => {
-      gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.8, ease: "power3.out" });
-    });
-  }
+  createPointerTilt(document.querySelector('.hero-image-card'), {
+    listenOn: document,
+    source: 'viewport',
+    rotate: 15,
+    duration: 0.6
+  });
 
   // Animation loop
   function animate() {
     requestAnimationFrame(animate);
 
-    currentScrollY += (scrollTargetY - currentScrollY) * 0.08;
+    currentScrollY = lerp(currentScrollY, scrollTargetY, 0.08);
 
     // Point Light follows mouse position smoothly
-    pointLight.position.x += (mouse3D.x - pointLight.position.x) * 0.08;
-    pointLight.position.y += (mouse3D.y - pointLight.position.y) * 0.08;
+    pointLight.position.x = lerp(pointLight.position.x, mouse3D.x, 0.08);
+    pointLight.position.y = lerp(pointLight.position.y, mouse3D.y, 0.08);
 
     // Push mesh grids backward slightly on scroll
     hexGroup.position.z = -currentScrollY * 0.002;
@@ -350,7 +328,7 @@ function initThreeJS() {
         targetZ = (3.5 - dist) * 0.28; // Push forward
       }
       
-      mesh.position.z += (targetZ - mesh.position.z) * 0.1;
+      mesh.position.z = lerp(mesh.position.z, targetZ, 0.1);
       
       // Slight cell rotations matching mouse distance
       mesh.rotation.z = Math.PI / 6 + (mesh.position.z * 0.1);
@@ -416,76 +394,25 @@ function initCardStacking() {
 
 // 5. Magnetic Snapping Hover Effects
 function initMagneticButtons() {
-  const magnets = document.querySelectorAll('.magnetic');
-  if (window.innerWidth <= 768) return;
+  if (isMobileViewport()) return;
 
-  magnets.forEach(btn => {
-    btn.addEventListener('mousemove', (e) => {
-      const rect = btn.getBoundingClientRect();
-      const x = e.clientX - rect.left - (rect.width / 2);
-      const y = e.clientY - rect.top - (rect.height / 2);
-
-      gsap.to(btn, {
-        x: x * 0.35,
-        y: y * 0.35,
-        duration: 0.3,
-        ease: "power2.out"
-      });
-      
-      const btnText = btn.querySelector('.magnetic-text') || btn;
-      if (btnText !== btn) {
-        gsap.to(btnText, {
-          x: x * 0.15,
-          y: y * 0.15,
-          duration: 0.3,
-          ease: "power2.out"
-        });
-      }
-    });
-
-    btn.addEventListener('mouseleave', () => {
-      gsap.to(btn, { x: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.3)" });
-      const btnText = btn.querySelector('.magnetic-text') || btn;
-      if (btnText !== btn) {
-        gsap.to(btnText, { x: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.3)" });
-      }
-    });
+  document.querySelectorAll('.magnetic').forEach(btn => {
+    const btnText = btn.querySelector('.magnetic-text');
+    createMagneticPull(btn, [
+      { el: btn, strength: 0.35 },
+      { el: btnText, strength: 0.15 }
+    ]);
   });
 }
 
 // 6. Project Card Parallax Image Hover
 function initProjectImageHover() {
-  const cards = document.querySelectorAll('.project-card');
-  
-  cards.forEach(card => {
-    const fallback = card.querySelector('.project-fallback-gfx');
-    if (!fallback) return;
-
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-
-      gsap.to(fallback, {
-        rotateY: x * 10,
-        rotateX: -y * 10,
-        x: x * 18,
-        y: y * 18,
-        duration: 0.5,
-        ease: "power2.out",
-        transformPerspective: 1000
-      });
-    });
-
-    card.addEventListener('mouseleave', () => {
-      gsap.to(fallback, {
-        rotateY: 0,
-        rotateX: 0,
-        x: 0,
-        y: 0,
-        duration: 0.8,
-        ease: "power3.out"
-      });
+  document.querySelectorAll('.project-card').forEach(card => {
+    createPointerTilt(card, {
+      target: card.querySelector('.project-fallback-gfx'),
+      rotate: 10,
+      translate: 18,
+      transformPerspective: 1000
     });
   });
 }
@@ -532,7 +459,7 @@ function initLiveClock() {
     // Standard User Local Time
     let localHours = hours % 12;
     localHours = localHours ? localHours : 12;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
+    minutes = padTwoDigits(minutes);
     
     const timeStr = `${localHours}:${minutes} ${ampm} LOCAL`;
     
@@ -552,6 +479,25 @@ function initLiveClock() {
   setInterval(updateClock, 1000);
 }
 
+// 9. Smooth Scrolling for in-page anchors
+function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = anchor.getAttribute('href');
+      if (targetId === '#') return;
+      scrollToElement(document.querySelector(targetId));
+    });
+  });
+
+  const scrollIndicator = document.getElementById('scroll-to-work');
+  if (scrollIndicator) {
+    scrollIndicator.addEventListener('click', () => {
+      scrollToElement(document.getElementById('about'));
+    });
+  }
+}
+
 // Initialize Everything
 window.addEventListener('DOMContentLoaded', () => {
   document.body.style.overflowY = 'hidden'; // Lock scrolling during preloader
@@ -564,4 +510,5 @@ window.addEventListener('DOMContentLoaded', () => {
   initProjectImageHover();
   initTestimonialsMarquee();
   initLiveClock();
+  initSmoothScroll();
 });
