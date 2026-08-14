@@ -3,7 +3,7 @@ name: Deploy to InfinityFree
 on:
   push:
     branches:
-      - main   # Agar aapka main branch ka naam 'master' hai toh yahan 'master' karein
+      - main   # Agar aapka default branch 'master' hai toh yahan master likhein
 
 jobs:
   web-deploy:
@@ -20,4 +20,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
-          server-dir: htdocs/   # Code htdocs folder ke andar jayega
+          server-dir: htdocs/
