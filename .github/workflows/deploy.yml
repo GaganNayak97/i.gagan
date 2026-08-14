@@ -5,6 +5,9 @@ on:
     branches:
       - main   # Agar aapka default branch 'master' hai toh yahan master likhein
 
+permissions:
+  contents: read
+
 jobs:
   web-deploy:
     name: Deploy Website
@@ -21,3 +24,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
           server-dir: htdocs/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/*.md

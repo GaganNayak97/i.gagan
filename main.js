@@ -552,6 +552,86 @@ function initLiveClock() {
   setInterval(updateClock, 1000);
 }
 
+// 9. Smooth Anchor Scrolling
+function initSmoothScrolling() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+
+      // Only resolve simple in-page fragments to avoid selector injection
+      if (!/^#[A-Za-z][\w-]*$/.test(targetId)) return;
+
+      const target = document.getElementById(targetId.slice(1));
+      if (target) {
+        gsap.to(window, {
+          scrollTo: target,
+          duration: 1.5,
+          ease: "power3.inOut"
+        });
+      }
+    });
+  });
+
+  const scrollIndicator = document.getElementById('scroll-to-work');
+  if (scrollIndicator) {
+    scrollIndicator.addEventListener('click', () => {
+      const aboutSec = document.getElementById('about');
+      if (aboutSec) {
+        aboutSec.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
+}
+
+// 10. Contact Form Validation
+function initContactForm() {
+  const form = document.getElementById('contact-form');
+  if (!form) return;
+
+  const status = document.getElementById('contact-form-status');
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+
+  const limits = { name: 80, email: 254, subject: 120, message: 2000 };
+
+  function setStatus(text, isError) {
+    if (!status) return;
+    status.textContent = text;
+    status.classList.toggle('is-error', Boolean(isError));
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const values = {};
+    for (const field of Object.keys(limits)) {
+      const input = form.elements[field];
+      values[field] = input ? input.value.trim() : '';
+    }
+
+    for (const [field, max] of Object.entries(limits)) {
+      if (values[field].length > max) {
+        setStatus(`${field} must be ${max} characters or fewer.`, true);
+        return;
+      }
+    }
+
+    if (!values.name || !values.message) {
+      setStatus('Please fill in your name and project details.', true);
+      return;
+    }
+
+    if (!emailPattern.test(values.email)) {
+      setStatus('Please enter a valid email address.', true);
+      return;
+    }
+
+    form.reset();
+    setStatus('Message sent successfully!', false);
+  });
+}
+
 // Initialize Everything
 window.addEventListener('DOMContentLoaded', () => {
   document.body.style.overflowY = 'hidden'; // Lock scrolling during preloader
@@ -564,4 +644,6 @@ window.addEventListener('DOMContentLoaded', () => {
   initProjectImageHover();
   initTestimonialsMarquee();
   initLiveClock();
+  initSmoothScrolling();
+  initContactForm();
 });

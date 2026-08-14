@@ -1029,6 +1029,17 @@ section {
   margin-top: 1rem;
 }
 
+.form-status {
+  margin-top: 1rem;
+  min-height: 1.2rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.form-status.is-error {
+  color: var(--accent-glow);
+}
+
 .form-submit-btn {
   background-color: var(--text-primary);
   color: var(--bg-secondary);
