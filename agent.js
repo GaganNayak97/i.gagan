@@ -94,9 +94,19 @@ function initChatbot() {
     agentMessages.scrollTop = agentMessages.scrollHeight;
   }
 
+  // Escape HTML so message text can never inject markup
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   // Format message text with markdown-like styling
   function formatMessageText(text) {
-    return text
+    return escapeHtml(text)
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/__(.*?)__/g, '<em>$1</em>')
       .replace(/\n/g, '<br>');
@@ -120,7 +130,7 @@ function initChatbot() {
   // Handle form submission
   agentForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const message = agentInput.value.trim();
+    const message = agentInput.value.trim().slice(0, 1000);
     
     if (message) {
       // Clear quick replies when first message is sent

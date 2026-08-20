@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gagan NYC — Portfolio</title>
   <meta name="description" content="Portfolio of Gagan NYC, creative designer, founder, and marketer. High-performing 3D WebGL experiences, no-code websites, video editing, and growth marketing solutions.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'">
   
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="style.css">
@@ -477,21 +479,21 @@
       </div>
 
       <div class="contact-right">
-        <form class="contact-form" id="contact-form" onsubmit="event.preventDefault(); alert('Message sent successfully!');">
+        <form class="contact-form" id="contact-form" novalidate>
           <div class="form-group">
-            <input type="text" id="name" class="form-input" placeholder=" " required>
+            <input type="text" id="name" name="name" class="form-input" placeholder=" " maxlength="80" required>
             <label for="name" class="form-label">Your Name</label>
           </div>
           <div class="form-group">
-            <input type="email" id="email" class="form-input" placeholder=" " required>
+            <input type="email" id="email" name="email" class="form-input" placeholder=" " maxlength="254" required>
             <label for="email" class="form-label">Email Address</label>
           </div>
           <div class="form-group">
-            <input type="text" id="subject" class="form-input" placeholder=" ">
+            <input type="text" id="subject" name="subject" class="form-input" placeholder=" " maxlength="120">
             <label for="subject" class="form-label">Subject</label>
           </div>
           <div class="form-group">
-            <textarea id="message" class="form-input" rows="4" placeholder=" " required style="resize: none;"></textarea>
+            <textarea id="message" name="message" class="form-input" rows="4" placeholder=" " maxlength="2000" required style="resize: none;"></textarea>
             <label for="message" class="form-label">Project Details</label>
           </div>
           <div class="form-btn-wrapper">
@@ -499,6 +501,7 @@
               <span class="magnetic-text">Send Message</span>
             </button>
           </div>
+          <p class="form-status" id="contact-form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
     </section>
@@ -536,7 +539,7 @@
       <div class="agent-messages" id="agent-messages"></div>
       <div class="agent-quick-replies" id="agent-quick-replies"></div>
       <form class="agent-form" id="agent-form">
-        <input id="agent-input" type="text" placeholder="Ask about services, work, or contact" autocomplete="off" />
+        <input id="agent-input" type="text" placeholder="Ask about services, work, or contact" autocomplete="off" maxlength="1000" />
         <button type="submit">Send</button>
       </form>
     </div>
@@ -550,42 +553,13 @@
   </footer>
 
   <!-- External Script Libraries (Three.js and GSAP via CDNs) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha384-d+vyQ0dYcymoP8ndq2hW7FGC50nqGdXUEgoOUGxbbkAJwZqL7h+jKN0GGgn9hFDS" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" integrity="sha384-poC0r6usQOX2Ayt/VGA+t81H6V3iN9L+Irz9iO8o+s0X20tLpzc9DOOtnKxhaQSE" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js" integrity="sha384-aO2rdje/BwxNeovaVnYCA1OUtEWaqumve5UCMUMEM9/kKJM/c9NyqDGmgPuJz8eQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   
   <!-- Main JavaScript File -->
   <script src="main.js"></script>
   <script src="agent.js"></script>
-
-  <script>
-    // Smooth scrolling link behavior for all anchors
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        const target = document.querySelector(targetId);
-        if (target) {
-          gsap.to(window, {
-            scrollTo: target,
-            duration: 1.5,
-            ease: "power3.inOut"
-          });
-        }
-      });
-    });
-
-    const scrollIndicator = document.getElementById('scroll-to-work');
-    if (scrollIndicator) {
-      scrollIndicator.addEventListener('click', () => {
-        const aboutSec = document.getElementById('about');
-        if (aboutSec) {
-          aboutSec.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    }
-  </script>
 </body>
 </html>
